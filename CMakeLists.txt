@@ -10,15 +10,25 @@ enable_testing()
 find_package(Git)
 if(Git_FOUND)
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+    COMMAND ${GIT_EXECUTABLE} rev-parse -q HEAD
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     ERROR_QUIET
     OUTPUT_VARIABLE COMMIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} symbolic-ref -q --short HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    ERROR_QUIET
+    OUTPUT_VARIABLE BRANCH_NAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 endif()
 if(NOT COMMIT_HASH)
   set(COMMIT_HASH "unknown")
+endif()
+if(NOT BRANCH_NAME)
+  set(BRANCH_NAME "[detached]")
 endif()
 
 configure_file(config/version.h.in

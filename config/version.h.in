@@ -12,6 +12,7 @@ static_assert(kVersionPatch <= 0xFF, "kVersionPatch must fit into 8 bits");
 constexpr int kVersion = (kVersionMajor << 16) | (kVersionMinor << 8) | kVersionPatch;
 
 constexpr const char* kProjectName = "@PROJECT_NAME@";
+constexpr const char* kBranchName = "@BRANCH_NAME@";
 constexpr const char* kCommitHash = "@COMMIT_HASH@";
 
 }  // namespace core
