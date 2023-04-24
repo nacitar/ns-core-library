@@ -10,8 +10,8 @@ enable_testing()
 find_package(Git)
 if(Git_FOUND)
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     ERROR_QUIET
     OUTPUT_VARIABLE COMMIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -27,34 +27,40 @@ configure_file(config/version.h.in
 file(GLOB_RECURSE NSCORE_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.cxx)
 
 add_library(ns-core INTERFACE)
-
-# Static library used so that the build script works even if header only.
-if(NSCORE_SOURCES)
-  add_library(ns-core-impl STATIC ${NSCORE_SOURCES})
-  target_link_libraries(ns-core INTERFACE ns-core-impl)
-endif()
-
 target_include_directories(
     ns-core
     INTERFACE include
     INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/generated
 )
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(ns-core INTERFACE
-        -Wall
-        -Wextra
-        -Wpedantic
-        -Werror
-        -O3
-    )
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(ns-core INTERFACE
-        /W4
-        /WX
-        /O2
-        /EHsc
-    )
+# Static library used so that the build script works even if header only.
+if(NSCORE_SOURCES)
+  add_library(ns-core-impl STATIC ${NSCORE_SOURCES})
+  target_link_libraries(ns-core INTERFACE ns-core-impl)
+
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+      target_compile_options(ns-core-impl PRIVATE
+          -Wall
+          -Wextra
+          -Wpedantic
+          -Werror
+          -Wold-style-cast
+          #-Wno-unused-function
+          #-Wno-unused-value
+          -Wconversion
+          -Wshadow
+          -Wsign-conversion
+          -Wnon-virtual-dtor
+          -O3
+      )
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+      target_compile_options(ns-core-impl PRIVATE
+          /W4
+          /WX
+          /O2
+          /EHsc
+      )
+  endif()
 endif()
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp tests/*.cxx)
