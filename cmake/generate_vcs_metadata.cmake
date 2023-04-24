@@ -1,0 +1,25 @@
+find_package(Git)
+if(Git_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse -q HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    ERROR_QUIET
+    OUTPUT_VARIABLE VCS_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} symbolic-ref -q --short HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    ERROR_QUIET
+    OUTPUT_VARIABLE VCS_BRANCH_NAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+endif()
+if(NOT VCS_COMMIT_HASH)
+  set(VCS_COMMIT_HASH "unknown")
+endif()
+if(NOT VCS_BRANCH_NAME)
+  set(VCS_BRANCH_NAME "[detached]")
+endif()
+
+configure_file(${SRC} ${DST} @ONLY)

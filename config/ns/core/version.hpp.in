@@ -3,6 +3,7 @@
 namespace ns {
 namespace core {
 
+constexpr const char* kProjectName = "@PROJECT_NAME@";
 constexpr unsigned int kVersionMajor = @PROJECT_VERSION_MAJOR@;
 constexpr unsigned int kVersionMinor = @PROJECT_VERSION_MINOR@;
 constexpr unsigned int kVersionPatch = @PROJECT_VERSION_PATCH@;
@@ -10,10 +11,6 @@ static_assert(kVersionMinor <= 0xFF, "kVersionMinor must fit into 8 bits");
 static_assert(kVersionPatch <= 0xFF, "kVersionPatch must fit into 8 bits");
 constexpr unsigned int kVersion = 
     (kVersionMajor << 16) | (kVersionMinor << 8) | kVersionPatch;
-
-constexpr const char* kProjectName = "@PROJECT_NAME@";
-constexpr const char* kBranchName = "@BRANCH_NAME@";
-constexpr const char* kCommitHash = "@COMMIT_HASH@";
 
 }  // namespace core
 }  // namespace ns

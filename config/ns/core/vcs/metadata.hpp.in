@@ -1,0 +1,12 @@
+#pragma once
+
+namespace ns {
+namespace core {
+namespace vcs {
+
+constexpr const char* kBranchName = "@VCS_BRANCH_NAME@";
+constexpr const char* kCommitHash = "@VCS_COMMIT_HASH@";
+
+}  // namespace vcs
+}  // namespace core
+}  // namespace ns

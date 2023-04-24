@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "gcc",
+      "displayName": "GCC Build",
+      "description": "Configure the project for building with GCC.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/gcc",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_C_COMPILER": "gcc"
+      }
+    },
+    {
+      "name": "clang",
+      "displayName": "Clang Build",
+      "description": "Configure the project for building with Clang.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/clang",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_COMPILER": "clang"
+      }
+    },
+    {
+      "name": "avr-gcc",
+      "displayName": "AVR-GCC Build",
+      "description": "Configure the project for building with AVR-GCC.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/avr-gcc",
+      "toolchainFile": "${sourceDir}/cmake/avr-gcc-toolchain.cmake",
+      "cacheVariables": {
+        "MCU": "atmega32u4",
+        "F_CPU": "16000000UL"
+      }
+    },
+    {
+      "name": "msvc",
+      "displayName": "MSVC Build",
+      "description": "Configure the project for building with MSVC.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/msvc",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_C_COMPILER": "cl"
+      }
+    }
+  ]
+}
