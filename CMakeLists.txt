@@ -7,13 +7,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
 
-include(cmake/configure_helpers.cmake)
-
-file(GLOB_RECURSE NSCORE_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.cxx)
-
 add_library(ns_core INTERFACE)
-configure_vcs_metadata_header(ns_core ns/core/vcs/metadata.hpp)
-configure_header(ns/core/version.hpp)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
+  COMMAND ${CMAKE_COMMAND}
+  -D SRC=${CMAKE_CURRENT_SOURCE_DIR}/config/ns/core/vcs/metadata.hpp.in
+  -D DST=${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/update_vcs_metadata.cmake
+  COMMENT "Configuring ns::core VCS metadata"
+  VERBATIM
+)
+add_custom_target(
+  ns_core_vcs_metadata_updater
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
+)
+add_dependencies(ns_core ns_core_vcs_metadata_updater)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/config/ns/core/version.hpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/version.hpp
+    @ONLY
+)
+
 target_include_directories(
     ns_core
     INTERFACE include
@@ -21,8 +36,9 @@ target_include_directories(
 )
 
 # Static library used so that the build script works even if header only.
-if(NSCORE_SOURCES)
-  add_library(ns_core_impl STATIC ${NSCORE_SOURCES})
+file(GLOB_RECURSE NS_CORE_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.cxx)
+if(NS_CORE_SOURCES)
+  add_library(ns_core_impl STATIC ${NS_CORE_SOURCES})
   target_link_libraries(ns_core INTERFACE ns_core_impl)
 
   if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -51,10 +67,9 @@ if(NSCORE_SOURCES)
 endif()
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp tests/*.cxx)
-
 foreach(test_src IN LISTS TEST_SOURCES)
-  get_filename_component(test_name ${test_src} NAME_WE)
-  set(test_name ${PROJECT_NAME}_${test_name})
+  get_filename_component(test_base_name ${test_src} NAME_WE)
+  set(test_name ns_core_${test_base_name})  # namespace it
   add_executable(${test_name} ${test_src})
   target_link_libraries(${test_name} ns_core)
   add_test(NAME ${test_name} COMMAND ${test_name})
