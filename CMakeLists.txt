@@ -14,7 +14,6 @@ add_custom_target(
   -D DST=${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/update_vcs_metadata.cmake
   COMMENT "Configuring ns::core VCS metadata"
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
   VERBATIM
 )
 configure_file(
