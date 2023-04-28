@@ -6,7 +6,7 @@ namespace vcs {
 
 constexpr const char* kBranchName = "@VCS_BRANCH_NAME@";
 constexpr const char* kCommitHash = "@VCS_COMMIT_HASH@";
-constexpr bool kHasLocalChanges = "@VCS_HAS_LOCAL_CHANGES@";
+constexpr bool kHasLocalChanges = @VCS_HAS_LOCAL_CHANGES@;
 
 }  // namespace vcs
 }  // namespace core

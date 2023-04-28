@@ -7,63 +7,54 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 enable_testing()
 
-add_library(ns_core INTERFACE)
-
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
+add_custom_target(
+  ns_core_vcs_metadata_updater
   COMMAND ${CMAKE_COMMAND}
   -D SRC=${CMAKE_CURRENT_SOURCE_DIR}/config/ns/core/vcs/metadata.hpp.in
   -D DST=${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
   -P ${CMAKE_CURRENT_SOURCE_DIR}/update_vcs_metadata.cmake
   COMMENT "Configuring ns::core VCS metadata"
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
   VERBATIM
 )
-add_custom_target(
-  ns_core_vcs_metadata_updater
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/vcs/metadata.hpp
-)
-add_dependencies(ns_core ns_core_vcs_metadata_updater)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/config/ns/core/version.hpp.in
     ${CMAKE_CURRENT_BINARY_DIR}/generated/ns/core/version.hpp
     @ONLY
 )
 
+add_library(ns_core STATIC)
+add_dependencies(ns_core ns_core_vcs_metadata_updater)
 target_include_directories(
     ns_core
     INTERFACE include
     INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/generated
 )
-
-# Static library used so that the build script works even if header only.
 file(GLOB_RECURSE NS_CORE_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.cxx)
-if(NS_CORE_SOURCES)
-  add_library(ns_core_impl STATIC ${NS_CORE_SOURCES})
-  target_link_libraries(ns_core INTERFACE ns_core_impl)
+target_sources(ns_core PRIVATE ${NS_CORE_SOURCES})
 
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-      target_compile_options(ns_core_impl PRIVATE
-          -Wall
-          -Wextra
-          -Wpedantic
-          -Werror
-          -Wold-style-cast
-          #-Wno-unused-function
-          #-Wno-unused-value
-          -Wconversion
-          -Wshadow
-          -Wsign-conversion
-          -Wnon-virtual-dtor
-          -O3
-      )
-  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-      target_compile_options(ns_core_impl PRIVATE
-          /W4
-          /WX
-          /O2
-          /EHsc
-      )
-  endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(ns_core PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Werror
+        -Wold-style-cast
+        #-Wno-unused-function
+        #-Wno-unused-value
+        -Wconversion
+        -Wshadow
+        -Wsign-conversion
+        -Wnon-virtual-dtor
+        -O3
+    )
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    target_compile_options(ns_core PRIVATE
+        /W4
+        /WX
+        /O2
+        /EHsc
+    )
 endif()
 
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp tests/*.cxx)
