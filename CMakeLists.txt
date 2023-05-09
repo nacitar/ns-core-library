@@ -57,11 +57,14 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     )
 endif()
 
-file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp tests/*.cxx)
-foreach(test_src IN LISTS TEST_SOURCES)
-  get_filename_component(test_base_name ${test_src} NAME_WE)
-  set(test_name ns_core_${test_base_name})  # namespace it
-  add_executable(${test_name} ${test_src})
-  target_link_libraries(${test_name} ns_core)
-  add_test(NAME ${test_name} COMMAND ${test_name})
-endforeach()
+# Only during development; not for library consumers.
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp tests/*.cxx)
+    foreach(test_src IN LISTS TEST_SOURCES)
+      get_filename_component(test_base_name ${test_src} NAME_WE)
+      set(test_name ns_core_${test_base_name})  # namespace it
+      add_executable(${test_name} ${test_src})
+      target_link_libraries(${test_name} ns_core)
+      add_test(NAME ${test_name} COMMAND ${test_name})
+    endforeach()
+endif()

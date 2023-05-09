@@ -1,0 +1,63 @@
+// vim: set ft=cpp:
+#ifndef NS_CORE_STD_CSTDDEF_
+#define NS_CORE_STD_CSTDDEF_
+
+// TODO: concepts for IntType?
+
+// Used for other types too, but only strictly required for offsetof().
+// The rest can be defined with standard c++ and no includes.
+#include <stddef.h>
+
+namespace std {
+
+using ptrdiff_t = ::ptrdiff_t;
+using size_t = ::size_t;
+using max_align_t = ::max_align_t;
+using nullptr_t = decltype(nullptr);
+
+enum class byte : unsigned char {};
+template <class IntType>
+constexpr byte& operator<<=(byte& b, IntType shift) noexcept {
+    return b = byte(static_cast<unsigned char>(b) << shift);
+}
+template <class IntType>
+constexpr byte operator<<(byte b, IntType shift) noexcept {
+    return byte(static_cast<unsigned char>(b) << shift);
+}
+template <class IntType>
+constexpr byte& operator>>=(byte& b, IntType shift) noexcept {
+    return b = byte(static_cast<unsigned char>(b) >> shift);
+}
+template <class IntType>
+constexpr byte operator>>(byte b, IntType shift) noexcept {
+    return byte(static_cast<unsigned char>(b) >> shift);
+}
+constexpr byte& operator|=(byte& l, byte r) noexcept {
+    return l = byte(static_cast<unsigned char>(l) | static_cast<unsigned char>(r));
+}
+constexpr byte operator|(byte l, byte r) noexcept {
+    return byte(static_cast<unsigned char>(l) | static_cast<unsigned char>(r));
+}
+constexpr byte& operator&=(byte& l, byte r) noexcept {
+    return l = byte(static_cast<unsigned char>(l) & static_cast<unsigned char>(r));
+}
+constexpr byte operator&(byte l, byte r) noexcept {
+    return byte(static_cast<unsigned char>(l) & static_cast<unsigned char>(r));
+}
+constexpr byte& operator^=(byte& l, byte r) noexcept {
+    return l = byte(static_cast<unsigned char>(l) ^ static_cast<unsigned char>(r));
+}
+constexpr byte operator^(byte l, byte r) noexcept {
+    return byte(static_cast<unsigned char>(l) ^ static_cast<unsigned char>(r));
+}
+constexpr byte operator~(byte b) noexcept {
+    return byte(~static_cast<unsigned char>(b));
+}
+template <class IntType>
+constexpr IntType to_integer(byte b) noexcept {
+    return static_cast<IntType>(b);
+}
+
+} // namespace std
+
+#endif  // NS_CORE_STD_CSTDDEF_
