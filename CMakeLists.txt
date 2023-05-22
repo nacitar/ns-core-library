@@ -19,11 +19,11 @@ foreach(source_file
 endforeach()
 
 # Configure include files to incorporate build/config metadata
-foreach(source_file
+foreach(header_file
     ns/core/features.hxx
     ns/core/version.hxx
 )
-    ns_core_configure_file(${source_file})
+    ns_core_generate_header(${header_file})
 endforeach()
 
 # Create a target for updating vcs metadata on every build

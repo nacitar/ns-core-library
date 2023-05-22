@@ -10,21 +10,21 @@ function(ns_core_feature_check variable_prefix source_file)
     ) 
 endfunction()
 
-function(ns_core_configure_file source_file)
+function(ns_core_generate_header header_file)
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/${source_file}.in
-        ${CMAKE_CURRENT_BINARY_DIR}/generated/${source_file}
+        ${CMAKE_CURRENT_SOURCE_DIR}/generated.in/${header_file}.in
+        ${CMAKE_CURRENT_BINARY_DIR}/generated/${header_file}
         @ONLY
     )
 endfunction()
 
-function(ns_core_create_vcs_metadata_updater target_name metadata_file)
+function(ns_core_create_vcs_metadata_updater target_name header_file)
     add_custom_target(
         ${target_name}
         COMMAND
             ${CMAKE_COMMAND}
-            -D SRC=${CMAKE_CURRENT_SOURCE_DIR}/include/${metadata_file}.in
-            -D DST=${CMAKE_CURRENT_BINARY_DIR}/generated/${metadata_file}
+            -D SRC=${CMAKE_CURRENT_SOURCE_DIR}/generated.in/${header_file}.in
+            -D DST=${CMAKE_CURRENT_BINARY_DIR}/generated/${header_file}
             -P ${CMAKE_CURRENT_LIST_DIR}/cmake/update_vcs_metadata.cmake
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Configuring ${PROJECT_NAME} VCS metadata"
