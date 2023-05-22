@@ -32,8 +32,7 @@ function(ns_core_create_vcs_metadata_updater target_name metadata_file)
     )
 endfunction()
 
-
-function(ns_core_compilation_test source_file)
+function(ns_core_compilation_test target_name source_file)
     set(source_file src/${source_file})  # tests live alongside the code
     get_filename_component(test_base_name ${source_file} NAME_WE)
     string(
@@ -46,21 +45,19 @@ function(ns_core_compilation_test source_file)
         )
     endif()
     string(REGEX MATCH "_fail(s)?" IS_FAIL ${TEST_SUFFIX})
-    set(test_name ns_core_test_${test_base_name})  # namespace it
     # Running unit tests built for avr is non-trivial, so using
     # static assertions and simply testing that it compiles is preferred.
-    add_executable(${test_name} EXCLUDE_FROM_ALL ${source_file})
-    target_link_libraries(${test_name} ns_core)
+    add_executable(${target_name} EXCLUDE_FROM_ALL ${source_file})
     add_test(
-        NAME ${test_name}_compile
+        NAME ${target_name}_compile
         COMMAND
         ${CMAKE_COMMAND}
         --build ${CMAKE_CURRENT_BINARY_DIR}
-        --target ${test_name}
+        --target ${target_name}
     )
     if(IS_FAIL)
         set_tests_properties(
-            ${test_name}_compile PROPERTIES WILL_FAIL TRUE
+            ${target_name}_compile PROPERTIES WILL_FAIL TRUE
         )
     endif()
 endfunction()

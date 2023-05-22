@@ -81,6 +81,9 @@ if(NS_CORE_BUILD_TESTING)
     foreach(source_file
         simple_test.cxx
     )
-        ns_core_compilation_test(${source_file})
+        get_filename_component(test_base_name ${source_file} NAME_WE)
+        set(test_target nx_core_test_${test_base_name})  # namespace it
+        ns_core_compilation_test(${test_target} ${source_file})
+        target_link_libraries(${test_target} ns_core)
     endforeach()
 endif()
