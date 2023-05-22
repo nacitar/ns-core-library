@@ -4,6 +4,7 @@ namespace ns {
 namespace core {
 namespace vcs {
 
+constexpr const char* kOriginUrl = "@VCS_ORIGIN_URL@";
 constexpr const char* kBranchName = "@VCS_BRANCH_NAME@";
 constexpr const char* kCommitHash = "@VCS_COMMIT_HASH@";
 constexpr bool kHasLocalChanges = @VCS_HAS_LOCAL_CHANGES@;

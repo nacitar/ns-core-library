@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef NS_CORE_VERSION_HXX_
+#define NS_CORE_VERSION_HXX_
 namespace ns {
 namespace core {
 
@@ -10,3 +10,4 @@ constexpr unsigned int kVersionPatch = @PROJECT_VERSION_PATCH@;
 
 }  // namespace core
 }  // namespace ns
+#endif  // NS_CORE_VERSION_HXX_
