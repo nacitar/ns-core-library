@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 project(ns_core VERSION 1.0.0 LANGUAGES CXX)
 
 include(CTest)
-include(cmake/functions.cmake)
+include(cmake/ns_core_build_functions.cmake)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,13 +27,11 @@ foreach(header_file
 endforeach()
 
 # Create a target for updating vcs metadata on every build
-ns_core_create_vcs_metadata_updater(ns_core_vcs_metadata_updater
-    ns/core/vcs/metadata.hxx
-)
 
 # Library definition
 add_library(ns_core STATIC)
-add_dependencies(ns_core ns_core_vcs_metadata_updater)
+ns_core_compile_options(ns_core)
+ns_core_vcs_metadata_updater(ns_core ns/core/vcs/metadata.hxx)
 target_include_directories(ns_core
     PUBLIC
         include
@@ -43,32 +41,6 @@ target_sources(ns_core
     PRIVATE 
         src/dummy.cxx
 )
-# Compiler settings
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(ns_core
-        PRIVATE
-            -Wall
-            -Wextra
-            -Wpedantic
-            -Werror
-            -Wold-style-cast
-            #-Wno-unused-function
-            #-Wno-unused-value
-            -Wconversion
-            -Wshadow
-            -Wsign-conversion
-            -Wnon-virtual-dtor
-            -O3
-    )
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(ns_core
-        PRIVATE
-            /W4
-            /WX
-            /O2
-            /EHsc
-    )
-endif()
 #target_compile_options(ns_core PRIVATE -nostdinc++)
 
 # Testing

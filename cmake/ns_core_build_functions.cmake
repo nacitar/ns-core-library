@@ -1,3 +1,34 @@
+function(ns_core_compile_options target_name)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target_name}
+            PRIVATE
+                -Wall
+                -Wextra
+                -Wpedantic
+                -Werror
+                -Wold-style-cast
+                #-Wno-unused-function
+                #-Wno-unused-value
+                -Wconversion
+                -Wshadow
+                -Wsign-conversion
+                -Wnon-virtual-dtor
+                -O3
+        )
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_options(${target_name}
+            PRIVATE
+                /W4
+                /WX
+                /O2
+                /EHsc
+        )
+    else()
+        message(FATAL_ERROR "No support currently provided for compiler with"
+            "id ${CMAKE_CXX_COMPILER_ID}.")
+    endif()
+endfunction()
+
 function(ns_core_feature_check variable_prefix source_file)
     set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")  # not running; no main
     set(feature_checks_dir ${CMAKE_CURRENT_SOURCE_DIR}/feature_checks)
@@ -18,9 +49,9 @@ function(ns_core_generate_header header_file)
     )
 endfunction()
 
-function(ns_core_create_vcs_metadata_updater target_name header_file)
+function(ns_core_vcs_metadata_updater target_name header_file)
     add_custom_target(
-        ${target_name}
+        ${target_name}_vcs_metadata_updater
         COMMAND
             ${CMAKE_COMMAND}
             -D SRC=${CMAKE_CURRENT_SOURCE_DIR}/generated.in/${header_file}.in
@@ -30,10 +61,11 @@ function(ns_core_create_vcs_metadata_updater target_name header_file)
         COMMENT "Configuring ${PROJECT_NAME} VCS metadata"
         VERBATIM
     )
+    add_dependencies(${target_name} ${target_name}_vcs_metadata_updater)
 endfunction()
 
 function(ns_core_compilation_test target_name source_file)
-    set(source_file src/${source_file})  # tests live alongside the code
+    set(source_file tests/${source_file})
     get_filename_component(test_base_name ${source_file} NAME_WE)
     string(
         REGEX MATCH "(_fail(s)?_)?test(s)?$" TEST_SUFFIX ${test_base_name}
