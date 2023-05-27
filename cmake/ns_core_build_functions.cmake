@@ -1,34 +1,3 @@
-function(ns_core_compile_options target_name)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(${target_name}
-            PRIVATE
-                -Wall
-                -Wextra
-                -Wpedantic
-                -Werror
-                -Wold-style-cast
-                #-Wno-unused-function
-                #-Wno-unused-value
-                -Wconversion
-                -Wshadow
-                -Wsign-conversion
-                -Wnon-virtual-dtor
-                -O3
-        )
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        target_compile_options(${target_name}
-            PRIVATE
-                /W4
-                /WX
-                /O2
-                /EHsc
-        )
-    else()
-        message(FATAL_ERROR "No support currently provided for compiler with"
-            "id ${CMAKE_CXX_COMPILER_ID}.")
-    endif()
-endfunction()
-
 function(ns_core_feature_check variable_prefix source_file)
     set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")  # not running; no main
     set(feature_checks_dir ${CMAKE_CURRENT_SOURCE_DIR}/feature_checks)

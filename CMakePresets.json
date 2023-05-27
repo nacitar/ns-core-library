@@ -37,7 +37,8 @@
       "toolchainFile": "${sourceDir}/cmake/avr_gcc_toolchain.cmake",
       "cacheVariables": {
         "MCU": "atmega32u4",
-        "F_CPU": "16000000UL"
+        "F_CPU": "16000000UL",
+        "NS_STD_SYSTEM": "ON"
       }
     },
     {
